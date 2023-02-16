@@ -1,24 +1,38 @@
 # Progress
 
-## Backlog
+## Entire Backlog
 ### Backend - Hunter Giordullo ###
-- Develop Auth Endpoint
-- Develop Session support for Auth (Saving Login)
-- Develop Admin Panel related endpoints for easy database management
-- Develop Search endpoint so you can search through your logged habits
+- [x] Create Initual Database Diagram
+- [x] Crud for prototyping
+- [] Create Updated Database Diagram
+- [] Create Technology Stack
+- [] Create Architecture Design
+- [] Rebuild Crud into single endpoint
+- [] Develop Auth endpoint
+- [] Develop Session support for Auth (Saving Login)
+- [] Develop Admin Panel related endpoints for easy database management
+- [] Develop Search endpoint so you can search through your logged habits
+- [] Develop Calendar endpoint
+- [] Develop Statistics endpoint
 
 
-
-## In Progress
+## Sprint 1
 ### Backend - Hunter Giordullo ###
-- Develop Auth Endpoint
-- Develop Session support for Auth (Saving Login)
+- [] Create Updated Database Diagram
+- [] Create Technology Stack
+- [] Create Architecture Design
+- [] Reprogram CRUD portion of the API to all be the same endpoint
+- [] Develop Auth Endpoint
+- [] Develop Session support for Auth (Saving Login)
 
 
-
-## Completed
+## Sprint 2
 ### Backend - Hunter Giordullo ###
-- Develop Send endpoint
-- Develop Read endpoint
-- Develop Update endpoint
-- Develop Delete endpoint
+- [] Develop Admin Panel related endpoints for easy database management
+- [] Develop Search endpoint so you can search through your logged habits
+
+
+## Sprint 3
+### Backend - Hunter Giordullo ###
+- [] Develop Calendar endpoint
+- [] Develop Statistics endpoint
