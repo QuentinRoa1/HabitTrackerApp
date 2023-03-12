@@ -1,49 +1,225 @@
-# [API Documentation]
+# Habit Tracker API
 
-## [CRUD]
+# Authentication Endpoints - api/auth.php
 
-### /api/create.php
-**What To Send:** session, task, tag, start, end
+### **Login**
 
-**Example Query:** /api/create.php?session=8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI&task=test&tag=test&start=2/14/23&end=2/15/23
+- Method: GET
+- Parameters: `username` (string), `password` (string)
+- Returns: JSON object with user data and a session token if successful
+- Throws: Exception if no results found
+- HTTP Response Codes:
+    - 200 if successful
+    - 204 if no results found
+    - 400 if parameters are missing or invalid
 
-**What it Returns:** If it was created successfully it will return a "Created" string.
+Example Request:
 
-### /api/read.php
-**What To Send:** session, task, tag, start, end
+```
+GET /auth.php?username=johndoe&password=pass123
+```
 
-**Example Query:** /api/read.php?session=8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI
+Example Response:
 
-**What it Returns:** If it was created successfully it will return a "Created" string.
+```
+[
+   {
+      "id":"1",
+      "username":"johndoe",
+      "email":"johndoe@example.com",
+      "admin":"0",
+      "created":"2022-12-31 23:59:59",
+      "session":"9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb"
+   }
+]
+```
 
-### /api/update.php
-**What To Send:** session
+### **Register**
 
-**Example Query:** /api/update.php?session=8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI&id=2&task=test&tag=tested
+- Method: POST
+- Parameters: `username` (string), `password` (string), `email` (string)
+- Returns: "Created" message if successful
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid, or username or email already in use
 
-**What it Returns:** If it was read successfully it will return a json of habits.
+Example Request:
 
-**Example Output:** [{"id":"2","uid":"1","task":"test","tag":"test","start":"2023-02-14 00:00:00","end":"2023-02-15 00:00:00","created":"2023-02-14 19:23:28"}]
+```
+POST /auth.php?username=johndoe&password=pass123&email=johndoe@example.com
+```
 
-### /api/delete.php
-**What To Send:** session, id
+Example Response:
 
-**Example Query:** /api/delete.php?session=8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI&id=1
+```
+Created
+```
 
-**What it Returns:** If it was deleted successfully it will return a "Deleted" string.
+### **Get User Info**
 
-## [AUTH]
+- Method: PUT
+- Parameters: `session` (string)
+- Returns: JSON object with user data if session is valid and not expired
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+    - 401 if session is expired
 
-### /api/auth.php
-**What To Send:** username, password **OR** session
+Example Request:
 
-**Example Query (Username & Password):** /api/auth.php?username=TestCustomer&password=Test
+```
+PUT /auth.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb
+```
 
-**Example Query (Session):** /api/auth.php?session=8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI
+Example Response:
 
-**What it Returns:** If the login was successful both login methods will return a json of the user data. The Username & Password method will also return a session token to save for future logins.
+```
+[
+   {
+      "id":"1",
+      "username":"johndoe",
+      "email":"johndoe@example.com",
+      "admin":"0",
+      "created":"2022-12-31 23:59:59"
+   }
+]
+```
 
-**Example Output (Username & Password):** [{"id":"1","username":"TestCustomer","email":"Test@Test.com","created":"2023-02-14 17:53:54","session":"8sInzfoMNUoJyaS5S0zN7uBcS1A6YHnxJ38imK8b4ScxChAUxaLZNHClNp2P05KI"}]
+# CRUD Endpoints - api/crud.php
 
-**Example Output (Session):**[{"id":"1","username":"TestCustomer","email":"Test@Test.com","created":"2023-02-14 17:53:54"}]
+### Creating a habit
 
+- Method: POST
+- Parameters: `session` (string), `task` (string), `tag` (string), `start` (string), `end`(string)
+- Date Format: `yyyy-mm-dd`
+- Returns: "Created" message if successful
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+POST /crud.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&task=Read%20a%20book&tag=Reading&start=2022-01-01&end=2022-01-31
+```
+
+Example response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 7
+
+Created
+```
+
+### Retrieving habits
+
+- Method: GET
+- Parameters: `session` (string)
+- Returns: JSON object with habit data if session is valid and not expired
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /crud.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb
+```
+
+Example response:
+
+```
+[
+  {
+    "id": "1",
+    "uid": "123",
+    "task": "Read a book",
+    "tag": "Reading",
+    "start": "2022-01-01",
+    "end": "2022-01-31"
+  }
+]
+```
+
+### Updating a habit
+
+- Method: PUT
+- Parameters: `session` (string), `id` (string), `task` (string - Optional), `tag` (string - Optional), `start` (string - Optional), `end`(string - Optional)
+- Date Format: `yyyy-mm-dd`
+- Returns: "Updated" message if successful
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+PUT /crud.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&id=1&task=Read%20two%20books
+```
+
+Example response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 7
+
+Updated
+```
+
+### Deleting a habit
+
+- Method: DELETE
+- Parameters: `session` (string), `id` (string)
+- Returns: "Deleted" message if successful
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+DELETE /crud.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&id=1
+```
+
+Example response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 7
+
+Deleted
+```
+
+# Search Endpoint - api/search.php
+
+### Search habits
+
+- Method: GET
+- Parameters: `session` (string), `task` (string - Optional), `tag` (string - Optional), `start` (string - Optional), `end`(string - Optional)
+- Date Format: `yyyy-mm-dd`
+- Returns: JSON object with habit data if session is valid and not expired
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /search.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&id=1&task=Read%20two%20books
+```
+
+Example response:
+
+```
+[
+  {
+    "id": "1",
+    "uid": "123",
+    "task": "Read a book",
+    "tag": "Reading",
+    "start": "2022-01-01",
+    "end": "2022-01-31"
+  }
+]
+```
