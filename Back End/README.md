@@ -223,3 +223,90 @@ Example response:
   }
 ]
 ```
+
+# Calendar Endpoint - api/calendar.php
+
+### Calendar Sort habits
+
+- Method: GET
+- Parameters: `session` (string), `date` (string ['end' or 'first]'), `date_start` (string), `date_end` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: JSON object with sorted habit data based on dates if session is valid and not expired
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /calendar.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&date=2022-01-01&date_start=2022-01-01&date_end=2022-01-31
+```
+
+Example response:
+
+```
+[
+    {
+        "id": "2",
+        "uid": "1",
+        "task": "test",
+        "tag": "tested",
+        "start": "2023-02-14 00:00:00",
+        "end": "2023-02-15 00:00:00",
+        "created": "2023-02-14 19:23:28"
+    },
+    {
+        "id": "3",
+        "uid": "1",
+        "task": "TestTask",
+        "tag": "TestTag",
+        "start": "2023-02-27 00:00:00",
+        "end": "2023-02-28 00:00:00",
+        "created": "2023-02-27 19:50:45"
+    }
+]
+```
+
+# Statistics Endpoint - api/statistics.php
+
+### Calculate Stats for Habits
+
+- Method: GET
+- Parameters: `session` (string), `date` (string), `length` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: JSON object with sorted habit data based on dates if session is valid and not expired
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /statistics.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&date=2022-01-01&date=2022-01-01&length=60
+```
+
+Example response:
+
+```
+[
+    {
+    "HabitsCount": 2,
+    "TagPercent": {
+        "tested": 50,
+        "TestTag": 50
+    },
+    "HabitsDays": [
+        {
+            "end": "2023-02-15 00:00:00",
+            "count": "1"
+        },
+        {
+            "end": "2023-02-28 00:00:00",
+            "count": "1"
+        }
+    ],
+    "ShortestHabit": "1",
+    "LongestHabit": "3"
+}
+]
+```
