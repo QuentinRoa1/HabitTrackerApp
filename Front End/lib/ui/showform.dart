@@ -48,37 +48,42 @@ class ShowForm extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            const Text("Date:"),
             TextField(
               controller: _dateController,
-              decoration: const InputDecoration(hintText: 'Date'),
+              decoration: const InputDecoration(hintText: 'yyyy/mm/dd'),
             ),
             const SizedBox(
               height: 10,
             ),
+            const Text("Time from:"),
             TextField(
               controller: _fromController,
-              decoration: const InputDecoration(hintText: 'Time'),
+              decoration: const InputDecoration(hintText: '18:00'),
             ),
             const SizedBox(
               height: 10,
             ),
+            const Text("Time to:"),
             TextField(
               controller: _toController,
-              decoration: const InputDecoration(hintText: 'Time'),
+              decoration: const InputDecoration(hintText: '20:00'),
             ),
             const SizedBox(
               height: 10,
             ),
+            const Text("Task:"),
             TextField(
               controller: _taskController,
-              decoration: const InputDecoration(hintText: 'task'),
+              decoration: const InputDecoration(hintText: 'Take out garbage'),
             ),
             const SizedBox(
               height: 10,
             ),
+            const Text("Tag:"),
             TextField(
               controller: _tagController,
-              decoration: const InputDecoration(hintText: ':TAG'),
+              decoration: const InputDecoration(hintText: ':Housekeeping'),
             ),
             const SizedBox(
               height: 20,
@@ -87,10 +92,10 @@ class ShowForm extends StatelessWidget {
               onPressed: () async {
                 // Save new item
                 if (itemKey == null) {
-                  if (_dateController.text == 'today'){
+                  if (_dateController.text == 'today') {
                     DateTime now = DateTime.now();
-                    _dateController.text ='${now.year}/${now.month}/${now.day}';
-
+                    _dateController.text =
+                        '${now.year}/${now.month}/${now.day}';
                   }
                   db.createItem(
                     {
@@ -116,11 +121,11 @@ class ShowForm extends StatelessWidget {
                 refreshItems();
 
                 // Clear the text fields
-                 _dateController.text = "";
-                 _fromController.text = "";
-                 _toController.text = "";
-                 _taskController.text = "";
-                 _tagController.text = "";
+                _dateController.text = "";
+                _fromController.text = "";
+                _toController.text = "";
+                _taskController.text = "";
+                _tagController.text = "";
 
                 Navigator.of(ctx).pop(); // Close the bottom sheet
               },
