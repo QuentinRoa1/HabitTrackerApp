@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'showform.dart';
-import 'package:habit_tracker/screens/task_detail_screen.dart';
 
 class CardWidget extends StatelessWidget {
   Map<String, dynamic> currentItem;
@@ -12,18 +11,13 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blueGrey[50],
-      margin: const EdgeInsets.all(10),
+      color: Color.fromARGB(168, 67, 76, 81),
+      margin: const EdgeInsets.all(8),
       elevation: 3,
       child: ListTile(
-        leading: IconButton(
-          icon: Icon(Icons.play_arrow),
-          onPressed: () {
-            print(currentItem);
-          },
-        ),
         title: Text(currentItem['task']),
-        subtitle: Text('${currentItem['date']} | ${currentItem['from']} | ${currentItem['to']} | ${currentItem['tag']}'),
+        subtitle: Text(
+            '${currentItem['date']} | ${currentItem['from']} | ${currentItem['to']} | ${currentItem['tag']}'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -36,18 +30,6 @@ class CardWidget extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () => _deleteItem(context, currentItem['key']),
-            ),
-            // detail button
-            IconButton(
-              icon: const Icon(Icons.calendar_month),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TaskDetailScreen(
-                    item: currentItem,
-                  ),
-                ),
-              ),
             ),
           ],
         ),
