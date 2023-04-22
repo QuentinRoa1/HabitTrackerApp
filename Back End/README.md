@@ -310,3 +310,118 @@ Example response:
 }
 ]
 ```
+
+# Goals Endpoint - api/goals.php
+
+### Create Goals
+
+- Method: POST
+- Parameters: `session` (string), `tag` (string), `goal` (string), `end` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: Created or Failed
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /goals.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&goal=drink&end=2022-01-01
+```
+
+Example response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 7
+
+Created
+```
+
+### Get Goals
+
+- Method: GET
+- Parameters: `session` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: JSON object with goals for that user
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /goals.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb
+```
+
+Example response:
+
+```
+[
+    {
+        "id": "3",
+        "uid": "1",
+        "tag": "TestTag",
+        "end": "2023-02-28 00:00:00",
+        "created": "2023-02-27 19:50:45"
+    }
+]
+```
+
+### Delete Goal
+
+- Method: DELETE
+- Parameters: `session` (string), `id` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: Deletes the goal
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /goals.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb&id=1
+```
+
+Example response:
+
+```
+HTTP/1.1 200 OK
+Content-Length: 7
+
+Deleted
+```
+
+# Leaderboard Endpoint - api/leaderboard.php
+
+### Get leaderboard
+
+- Method: GET
+- Parameters: `session` (string)
+- Date Format: `yyyy-mm-dd`
+- Returns: returns Leaderboard JSON object
+- HTTP Response Codes:
+    - 200 if successful
+    - 400 if parameters are missing or invalid
+
+Example request:
+
+```
+GET /leaderboard.php?session=9tAKsZ7rxW2s8Yr7TjTbTcJTjVgsTtJ4hKj4D4PmDKZztOeI1jYw1mJlKTlLNMb
+```
+
+Example response:
+
+```
+[
+    {
+        "username": "Admin",
+        "score": "1"
+    },
+    {
+        "username": "TestCustomer",
+        "score": "2"
+    }
+]
+```
