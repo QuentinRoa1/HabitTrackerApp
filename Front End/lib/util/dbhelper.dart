@@ -8,16 +8,18 @@ class Database {
   late Box<dynamic> shoppingBox;
   Database({required this.db}) {
     shoppingBox = Hive.box(db);
-    print(shoppingBox.keys.toList());
   }
 
   List<Map<String, dynamic>> toList() {
     final data = shoppingBox.keys.map((key) {
       final value = shoppingBox.get(key);
       return {
-        "key": key, "date": value["date"],
-        "from": value['from'], "to":value['to'],
-        'task':value['task'],'tag':value['tag']
+        "key": key, 
+        "date":value["date"],
+        "from": value['from'], 
+        "to":value['to'],
+        "task":value['task'],
+        "tag":value['tag']
       };
     }).toList();
     return data;

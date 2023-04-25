@@ -11,7 +11,7 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color.fromARGB(168, 67, 76, 81),
+      color: Color.fromARGB(117, 148, 157, 162),
       margin: const EdgeInsets.all(8),
       elevation: 3,
       child: ListTile(

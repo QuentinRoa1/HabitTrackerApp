@@ -9,6 +9,7 @@ import 'package:habit_tracker/ui/cardwidget.dart';
 import 'package:habit_tracker/util/dbhelper.dart';
 import 'package:habit_tracker/screens/sign_in_screen.dart';
 import 'package:habit_tracker/ui/searchbar.dart';
+import 'package:habit_tracker/ui/navbar.dart';
 
 // Home Page
 class TaskList extends StatefulWidget {
@@ -25,13 +26,24 @@ class _TaskListState extends State<TaskList> {
   final String dbname;
   late var db;
   late var show;
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
+  void onClicked(int index) {
+    final routes = ['/task_list_screen','/calendar_screen','/leaderboard_screen','/statistics_screen'];
+    setState(() {
+      selectedIndex = index;
+    }
+    );
+    if (selectedIndex != 0){
+      Navigator.pushNamed(context,routes[selectedIndex]);
+    }
+  }
 
   _TaskListState({required this.dbname}) {
     _items = [];
     db = Database(db: dbname);
     show = ShowForm(db: db, refreshItems: _refreshItems);
   }
+
   @override
   void initState() {
     super.initState();
@@ -55,12 +67,6 @@ class _TaskListState extends State<TaskList> {
     _refreshItems();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +83,7 @@ class _TaskListState extends State<TaskList> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SignInScreen(signing_db_name: "Sign In");
+                  return SignInScreen();
                 },
               ),
             ),
@@ -114,30 +120,8 @@ class _TaskListState extends State<TaskList> {
         onPressed: () async => await show.showForm(context, null),
         label: const Text("New Task"),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Calendar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.format_list_numbered),
-            label: 'Leaderboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.leaderboard),
-            label: 'Statistics',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 142, 16, 221),
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-      ),
+      bottomNavigationBar:
+          NavBar(selectedIndex: 0, onClicked: onClicked), // eventually the 0 should be replaced with selectedIndex and the nav bar shouold be on every page.
     );
   }
 }
