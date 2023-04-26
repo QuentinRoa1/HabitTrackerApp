@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:front_end_coach/providers/api_helper.dart';
 import 'package:front_end_coach/util/auth_util.dart';
+import 'package:front_end_coach/screens/abstract_screen_widget.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterScreen extends AbstractScreenWidget {
+  const RegisterScreen({super.key, required super.habitUtil, required super.auth});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -83,22 +83,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SnackBar(content: Text('Processing Data'))
                       );
 
-                      AuthUtil auth = AuthUtil(
-                        apiHelper:
-                            APIHelper(url: 'http://vasycia.com/ASE485/api'),
-                      );
-
-                      auth.register(_username, _email, _password).then(
+                      widget.auth.register(_username, _email, _password).then(
                         (registerValue) {
-                          print(registerValue);
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (registerValue) {
+                          if (registerValue is Map<String, String>) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Registered, Logging in'))
                             );
-                            auth.login(_username, _password).then(
+                            widget.auth.login(_username, _password).then(
                                   (value) => {
-                                    if (value)
+                                    if (value == "Success")
                                       {
                                         context.go('/dashboard'),
                                       }
@@ -106,9 +100,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                                'Bad Login'),
+                                                'Bad Login: $value'),
                                           ),
                                         ),
                                       }

@@ -126,7 +126,7 @@
 	</div>
 	
 	<div class="container mt-3">
-		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" class="form-inline">
+		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>?session=<?php echo $_GET['session'];?>" class="form-inline">
 			<div class="form-group mr-2">
 				<label for="id" class="mr-2">ID:</label>
 				<input type="text" name="id" size="2" class="form-control" required>

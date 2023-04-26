@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:front_end_coach/util/auth_util.dart';
 import 'package:go_router/go_router.dart';
+import 'package:front_end_coach/screens/abstract_screen_widget.dart';
 
-import '../../providers/api_helper.dart';
+import '../../providers/http_api_helper.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginScreen extends AbstractScreenWidget {
+  const LoginScreen({Key? key, required super.habitUtil, required super.auth});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -18,8 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    APIHelper apiHelper = APIHelper(url: 'http://vasycia.com/ASE485/api');
-
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
@@ -60,7 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    context.go('/home');
+                    // todo this is where auth will do its thing
+                    context.go('/dashboard');
                   },
                   child: const Text('Sign In'),
                 ),

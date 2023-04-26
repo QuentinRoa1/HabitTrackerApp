@@ -1,33 +1,33 @@
 class Client {
   final String id;
-  final String name;
+  final String username;
   final String email;
-  final String coachFlag;
+  final String admin;
   final String createdAt;
 
   Client({
     required this.id,
-    required this.name,
+    required this.username,
     required this.email,
     required this.createdAt,
-    required this.coachFlag,
+    required this.admin,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) {
     return Client(
       id: json['id'],
-      name: json['name'],
+      username: json['username'],
       email: json['email'],
-      createdAt: json['created_at'],
-      coachFlag: json['coach_flag'],
+      createdAt: json['created'],
+      admin: json['admin'],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'name': name,
+    'name': username,
     'email': email,
     'created_at': createdAt,
-    'coach_flag': coachFlag,
+    'coach_flag': admin,
   };
 }

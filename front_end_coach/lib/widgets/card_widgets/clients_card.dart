@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:front_end_coach/models/client_model.dart';
+
 class ClientsCard extends StatefulWidget {
-  const ClientsCard({Key? key}) : super(key: key);
+  Client client;
+  Map<String, dynamic> clientStats;
+
+  ClientsCard(
+      {required this.client, required this.clientStats});
 
   @override
   _ClientsCardState createState() => _ClientsCardState();
@@ -10,28 +16,16 @@ class ClientsCard extends StatefulWidget {
 class _ClientsCardState extends State<ClientsCard> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return InkWell(
+      onTap: () {
+
+      },
       child: Column(
         children: [
-          const ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Client Name'),
-            subtitle: Text('Client Email'),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {},
-                child: const Text('Edit'),
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Delete'),
-              ),
-              const SizedBox(width: 8),
-            ],
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(widget.client.username),
+            subtitle: Text(widget.client.email),
           ),
         ],
       ),

@@ -2,26 +2,47 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:front_end_coach/util/auth_util.dart';
 import 'package:front_end_coach/util/svg_util.dart';
 import 'package:go_router/go_router.dart';
+import 'package:front_end_coach/screens/abstract_screen_widget.dart';
 
-import '../providers/api_helper.dart';
-
-class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({super.key});
+class LoadingScreen extends AbstractScreenWidget {
+  const LoadingScreen(
+      {super.key, required super.habitUtil, required super.auth});
 
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  Future<String> getRoute() {
-    AuthUtil auth = AuthUtil( apiHelper: APIHelper(url: 'http://vasycia.com/ASE485/api') );
+  Future<String> _getRoute() {
+    Future<bool> isLoggedIn = widget.auth.isLoggedIn();
+    Future<String> beep = isLoggedIn
+        .then((value) => (value == true) ? '/dashboard' : '/login')
+        .onError((error, stackTrace) {
+      if (error.toString().contains("400") || error.toString().contains("401")) {
+        return Future.value('/login');
+      } else {
+        // todo replace with error redirect
+        return Future.value('/login');
+      }
+    });
+    return beep;
+  }
 
-    var isLoggedIn = auth.isLoggedIn();
+  String goingTo = "/";
+  String message = "Loading...";
 
-    return isLoggedIn.then((value) => (value == true) ? '/dashboard' :'/login');
+  @override
+  void initState() {
+    super.initState();
+    _getRoute().then((value) {
+      setState(() {
+        goingTo = value;
+        message = "Redirecting...";
+      });
+      context.go(goingTo);
+    });
   }
 
   @override
@@ -37,53 +58,19 @@ class _LoadingScreenState extends State<LoadingScreen> {
             const Text("Front End Coach",
                 style: TextStyle(color: Colors.white, fontSize: 20)),
             const SizedBox(height: 20),
-            FutureBuilder<String>(
-              future: getRoute(),
-              // a previously-obtained Future<String> or null
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                List<Widget> children;
-
-                if (snapshot.connectionState == ConnectionState.done  && snapshot.hasData) {
-                  children = [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: Text('Welcome Back!'),
-                    ),
-                  ];
-                  // redirect to the dashboard
-                  context.go(snapshot.data!);
-                } else if (snapshot.hasError) {
-                  children = <Widget>[
-                    const SpinKitRing(
-                      color: Colors.white,
-                      size: 50.0,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: Text('Redirecting...'),
-                    ),
-                  ];
-
-                  // redirect to the login screen
-                  context.go('/login');
-                } else {
-                  children = <Widget>[
-                    const SpinKitRing(
-                      color: Colors.white,
-                      size: 50.0,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: Text('Loading...'),
-                    ),
-                  ];
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: children,
-                );
-              },
-            )
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SpinKitRing(
+                  color: Colors.white,
+                  size: 50.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(message),
+                ),
+              ],
+            ),
           ],
         ),
       ),

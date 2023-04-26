@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:front_end_coach/util/habit_util.dart';
 
 class HabitsTab extends StatefulWidget {
-  const HabitsTab({Key? key}) : super(key: key);
+  final HabitUtil habitUtil;
+
+  const HabitsTab({Key? key, required this.habitUtil}) : super(key: key);
 
   @override
   _HabitsTabState createState() => _HabitsTabState();
