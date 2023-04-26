@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import '../util/dbhelper.dart';
+import 'package:habit_tracker/util/apicalls.dart';
 
 class ShowForm extends StatelessWidget {
   void Function() refreshItems;
   Database db;
-  late List<Map<String, dynamic>> items;
+  late List items;
 
   ShowForm({required this.db, required this.refreshItems});
 
 // TextFields' controllers
-  final TextEditingController _dateController = TextEditingController();
   final TextEditingController _fromController = TextEditingController();
   final TextEditingController _toController = TextEditingController();
   final TextEditingController _taskController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
-  void updateItems(List<Map<String, dynamic>> items) {
+  void updateItems(List items) {
     this.items = items;
   }
 
@@ -26,10 +26,9 @@ class ShowForm extends StatelessWidget {
 
     if (itemKey != null) {
       final existingItem =
-          items.firstWhere((element) => element['key'] == itemKey);
-      _dateController.text = existingItem['date'];
-      _fromController.text = existingItem['from'];
-      _toController.text = existingItem['to'];
+      items.firstWhere((element) => int.parse(element['id']) == itemKey);
+      _fromController.text = existingItem['start'];
+      _toController.text = existingItem['end'];
       _taskController.text = existingItem['task'];
       _tagController.text = existingItem['tag'];
     }
@@ -48,26 +47,18 @@ class ShowForm extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text("Date:"),
+            const Text("From:"),
             TextField(
-              controller: _dateController,
+              controller: _fromController,
               decoration: const InputDecoration(hintText: 'yyyy/mm/dd'),
             ),
             const SizedBox(
               height: 10,
             ),
-            const Text("Time from:"),
-            TextField(
-              controller: _fromController,
-              decoration: const InputDecoration(hintText: '18:00'),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text("Time to:"),
+            const Text("To:"),
             TextField(
               controller: _toController,
-              decoration: const InputDecoration(hintText: '20:00'),
+              decoration: const InputDecoration(hintText: 'yyyy/mm/dd'),
             ),
             const SizedBox(
               height: 10,
@@ -92,41 +83,10 @@ class ShowForm extends StatelessWidget {
               onPressed: () async {
                 // Save new item
                 if (itemKey == null) {
-                  if (_dateController.text == 'today') {
-                    DateTime now = DateTime.now();
-                    _dateController.text =
-                        '${now.year}/${now.month}/${now.day}';
-                  }
-                  db.createItem(
-                    {
-                      "date": _dateController.text,
-                      "from": _fromController.text,
-                      "to": _toController.text,
-                      "task": _taskController.text,
-                      "tag": _tagController.text,
-                    },
-                  );
+                  sendHabit(_taskController.text.trim(),_tagController.text.trim(),_toController.text.trim(),_fromController.text.trim());
                 } else {
-                  db.updateItem(
-                    itemKey,
-                    {
-                      'date': _dateController.text.trim(),
-                      'from': _fromController.text.trim(),
-                      'to': _toController.text.trim(),
-                      'task': _taskController.text.trim(),
-                      'tag': _tagController.text.trim(),
-                    },
-                  );
+                  updateHabit(itemKey,_taskController.text.trim(),_tagController.text.trim(),_toController.text.trim(),_fromController.text.trim());
                 }
-                refreshItems();
-
-                // Clear the text fields
-                _dateController.text = "";
-                _fromController.text = "";
-                _toController.text = "";
-                _taskController.text = "";
-                _tagController.text = "";
-
                 Navigator.of(ctx).pop(); // Close the bottom sheet
               },
               child: Text(itemKey == null ? 'Create New' : 'Update'),

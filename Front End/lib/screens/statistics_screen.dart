@@ -26,37 +26,34 @@ class _StatisticsState extends State<StatisticsView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Statistics',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Statistics'),
-        ),
-        body: Center(
-          child: data == null
-              ? CircularProgressIndicator()
-              : ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Statistics'),
+      ),
+      body: Center(
+        child: data == null
+            ? CircularProgressIndicator()
+            : ListView.builder(
+                itemCount: data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: Column(
                         children: <Widget>[
-                          Text("Habits Count: ${data[index]["HabitsCount"]}"),
-                          Text("Tag Percent: ${data[index]["TagPercent"]}"),
-                          Text("Shortest Habit: ${data[index]["ShortestHabit"]}"),
-                          Text("Longest Habit: ${data[index]["LongestHabit"]}"),
-                          Text("Habits Days: "),
-                          Column(
-                            children: data[index]["HabitsDays"].map<Widget>((day) {
-                              return Text("- ${day["end"]} : ${day["count"]} days");
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-        ),
+                        Text("Habits Count: ${data[index]["HabitsCount"]}"),
+                        Text("Tag Percent: ${data[index]["TagPercent"]}"),
+                        Text("Shortest Habit: ${data[index]["ShortestHabit"]}"),
+                        Text("Longest Habit: ${data[index]["LongestHabit"]}"),
+                        Text("Habits Days: "),
+                        Column(
+                          children: data[index]["HabitsDays"].map<Widget>((day) {
+                            return Text("- ${day["end"]} : ${day["count"]} days");
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

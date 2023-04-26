@@ -10,6 +10,8 @@ import 'package:habit_tracker/util/dbhelper.dart';
 import 'package:habit_tracker/screens/sign_in_screen.dart';
 import 'package:habit_tracker/ui/searchbar.dart';
 import 'package:habit_tracker/ui/navbar.dart';
+import 'package:habit_tracker/util/apicalls.dart';
+import 'package:habit_tracker/util/session.dart';
 
 // Home Page
 class TaskList extends StatefulWidget {
@@ -22,7 +24,7 @@ class TaskList extends StatefulWidget {
 }
 
 class _TaskListState extends State<TaskList> {
-  late List<Map<String, dynamic>> _items;
+  late List _items;
   final String dbname;
   late var db;
   late var show;
@@ -51,8 +53,8 @@ class _TaskListState extends State<TaskList> {
   }
 
   // Get all items from the database
-  void _refreshItems() {
-    final data = db.toList();
+  void _refreshItems() async{
+    final data = await getHabits();
     setState(
       () {
         _items = data.reversed.toList();
@@ -61,10 +63,13 @@ class _TaskListState extends State<TaskList> {
       },
     );
   }
-
   void deleteItem(BuildContext context, int key) {
-    db.deleteItem(context, key);
-    _refreshItems();
+    final session=AuthPreferences.getSession();
+    if(session!=''){
+      deleteHabit(key.toString());
+      setState((){
+      _refreshItems();});
+    }
   }
 
   @override

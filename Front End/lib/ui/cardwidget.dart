@@ -17,7 +17,7 @@ class CardWidget extends StatelessWidget {
       child: ListTile(
         title: Text(currentItem['task']),
         subtitle: Text(
-            '${currentItem['date']} | ${currentItem['from']} | ${currentItem['to']} | ${currentItem['tag']}'),
+            '${currentItem['start']} | ${currentItem['end']} | ${currentItem['tag']}'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -25,11 +25,11 @@ class CardWidget extends StatelessWidget {
             IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () async =>
-                    show.showForm(context, currentItem['key'])),
+                    show.showForm(context, int.parse(currentItem['id']))),
             // Delete button
             IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: () => _deleteItem(context, currentItem['key']),
+              onPressed: () => _deleteItem(context, int.parse(currentItem['id'])),
             ),
           ],
         ),
