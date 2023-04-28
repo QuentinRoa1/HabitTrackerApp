@@ -83,9 +83,9 @@ class ShowForm extends StatelessWidget {
               onPressed: () async {
                 // Save new item
                 if (itemKey == null) {
-                  sendHabit(_taskController.text.trim(),_tagController.text.trim(),_toController.text.trim(),_fromController.text.trim());
+                  await sendHabit(_taskController.text.trim(),_tagController.text.trim(),_fromController.text.trim(),_toController.text.trim());
                 } else {
-                  updateHabit(itemKey,_taskController.text.trim(),_tagController.text.trim(),_toController.text.trim(),_fromController.text.trim());
+                  await updateHabit(itemKey,_taskController.text.trim(),_tagController.text.trim(),_fromController.text.trim(),_toController.text.trim());
                 }
                 Navigator.of(ctx).pop(); // Close the bottom sheet
               },
