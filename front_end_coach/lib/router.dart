@@ -13,28 +13,27 @@ typedef ScreenWidget = Widget Function(
 class HabitRouter extends GoRouter {
   late final FakeAPI apiHelper;
 
-  HabitRouter({required super.routes});
+  HabitRouter({required super.routes, super.initialLocation});
 
   static HabitRouter create(
-      {required String url,
-      required Map<String, ScreenWidget> routerConfigMap,
-      required FakeAPI apiHelper}) {
-    AuthUtil auth = AuthUtil(apiHelper: apiHelper);
-    HabitUtil habitUtil = HabitUtil(habitApiHelper: apiHelper);
+      {required Map<String, ScreenWidget> routerConfigMap,
+      required AuthUtil auth,
+      required HabitUtil habitUtil,
+      required ClientUtil clientUtil,
+      required GoalUtil goalUtil,
+      String? initialLocation = "/"}) {
     List<GoRoute> routes = [];
 
     routerConfigMap.forEach((key, screenWidget) {
       routes.add(
         GoRoute(
           path: key,
+          name: key.substring(1),
           builder: (context, state) =>
               screenWidget(habitUtil: habitUtil, auth: auth),
         ),
       );
     });
-
-    ClientUtil clientUtil = ClientUtil(habitApiHelper: apiHelper);
-    GoalUtil goalUtil = GoalUtil(habitApiHelper: apiHelper);
 
     routes.add(
       GoRoute(
@@ -48,6 +47,6 @@ class HabitRouter extends GoRouter {
       ),
     );
 
-    return HabitRouter(routes: routes);
+    return HabitRouter(routes: routes, initialLocation: initialLocation);
   }
 }

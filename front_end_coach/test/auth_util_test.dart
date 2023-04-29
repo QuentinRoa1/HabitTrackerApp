@@ -28,8 +28,8 @@ void main() {
 
   group('Constructor tests -- ', () {
     test('Constructor', () async {
-      AuthUtil authUtil = AuthUtil(apiHelper: mockApiHelper);
-      expect(authUtil.apiHelper, mockApiHelper);
+      AuthUtil authUtil = AuthUtil(habitApiHelper: mockApiHelper);
+      expect(authUtil.habitApiHelper, mockApiHelper);
     });
   });
 
@@ -55,13 +55,6 @@ void main() {
     test("invalid validateUsername", () {
       expect(AuthUtil.validateUsername("3p!cG@/\\/\\3R!!"), "Invalid Username");
     });
-
-    test("valid validateName", () {
-      expect(AuthUtil.validateName("validName"), null);
-    });
-    test("invalid validateName", () {
-      expect(AuthUtil.validateName("3p!cG@/\\/\\3R!!"), "Invalid Name");
-    });
   });
 
   group("login validation tests --", () {
@@ -73,7 +66,7 @@ void main() {
           "admin": "1",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
       expect(await authUtil.isValidUser(), true);
     });
     test("invalid isValidUser test", () async {
@@ -82,7 +75,14 @@ void main() {
           "admin": "0",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
+      expect(await authUtil.isValidUser(), false);
+    });
+    test("isValidUser receives empty response test", () async {
+      when(mockApiHelper.put(any, any, null)).thenAnswer((_) async {
+        return Future.value([]);
+      });
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
       expect(await authUtil.isValidUser(), false);
     });
 
@@ -93,7 +93,7 @@ void main() {
           "admin": "1",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       expect(await authUtil.isLoggedIn(), true);
     });
@@ -104,7 +104,7 @@ void main() {
           "admin": "1",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       expect(await authUtil.isLoggedIn(), false);
     });
@@ -123,7 +123,7 @@ void main() {
           "session": "cIsForCookie",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       String displayedMessage =
           await authUtil.login(loginData["username"]!, loginData["password"]!);
@@ -135,11 +135,11 @@ void main() {
           "notASession": "",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       String displayedMessage =
           await authUtil.login(loginData["username"]!, loginData["password"]!);
-      expect(displayedMessage, "Invalid Request, please try again");
+      expect(displayedMessage, "Invalid Request");
     });
     test("invalid login test", () async {
       when(mockApiHelper.get("auth", loginData)).thenAnswer((_) async {
@@ -147,7 +147,7 @@ void main() {
           "session": "valid res",
         } as FutureOr<Iterable>?);
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       loginData["password"] = "p@\$\$w0rdWee";
       loginData["username"] = "oops :)";
@@ -172,9 +172,9 @@ void main() {
         "session": "cIsForCookie",
       };
       when(mockApiHelper.post("auth", any, null)).thenAnswer((_) async {
-        return Future.value(result as FutureOr<Iterable>?);
+        return Future.value(result.toString());
       });
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
       String displayedMessage =
           await authUtil.register(loginData["username"]!, loginData["email"]!, loginData["password"]!);
       expect(displayedMessage, result.toString());
@@ -182,15 +182,15 @@ void main() {
     test("badRes register test", () async {
       String result = "Issue with your submission: Exception: Bad Sub";
       when(mockApiHelper.post("auth", any, null)).thenThrow(Exception("Bad Sub"));
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       String displayedMessage =
           await authUtil.register(loginData["username"]!, loginData["email"]!, loginData["password"]!);
       expect(displayedMessage, result.toString());
     });
     test("badInfo register test", () async {
-      String result = "Invalid Username or Password, please try again";
-      authUtil = AuthUtil(apiHelper: mockApiHelper);
+      String result = "Invalid Username or Password";
+      authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
       String displayedMessage =
           await authUtil.register("b@dU\$3rN@m3", "bad email : (", "bad pw");

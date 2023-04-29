@@ -79,7 +79,7 @@ void main() {
     test('Valid url, route', () async {
       String route = 'reqNoParams';
       Map<String, String>? params;
-      Map<String, dynamic> response = await sut.get(route, params) as Map<String, dynamic>;
+      Map<String, dynamic> response = (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
 
       expect(response['success'], true);
     });
@@ -90,7 +90,7 @@ void main() {
         "username": "test",
         "password": "test"
       };
-      Map<String, dynamic> response = await sut.get(route, params) as Map<String, dynamic>;
+      Map<String, dynamic> response = (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
 
       expect(response['success'], true);
     });

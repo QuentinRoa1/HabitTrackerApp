@@ -34,7 +34,16 @@ class HttpApiHelper extends AbstractHttpApiHelper {
       http.Response response = await client.get(destUri);
       if (response.statusCode == 200) {
         // API connection successful
-        Iterable<dynamic> decoded = jsonDecode(response.body);
+        var decoded = jsonDecode(response.body);
+        if (decoded is Iterable<dynamic>) {
+          return decoded;
+        } else {
+          try {
+            return [decoded as Map<String, dynamic>];
+          } catch (e) {
+            print(e.toString());
+          }
+        }
         return decoded;
       } else {
         // API connection failed
@@ -42,21 +51,20 @@ class HttpApiHelper extends AbstractHttpApiHelper {
       }
     } catch (e) {
       // API connection failed
-      throw APIError('API req failed with params \n${params.toString()}\n${e.toString()}');
+      throw APIError('API req failed with params ${params.toString()} -- ${e.toString()}');
     }
   }
 
   @override
-  Future<Iterable<dynamic>> post(String endpoint, Map<String, String>? params,
+  Future<String> post(String endpoint, Map<String, String>? params,
       Map<String, String>? body) async {
     Uri destUri = generateURI(endpoint, params);
 
     try {
       http.Response response = await client.post(destUri, body: body);
       if (response.statusCode == 200) {
-        // API connection successful
-        Iterable<dynamic> decoded = jsonDecode(response.body);
-        return decoded;
+        // API connection successful;
+        return response.body;
       } else {
         // API connection failed
         throw APIError('Status error code: ${response.statusCode}');

@@ -283,7 +283,7 @@ class MockHttpApiHelper extends _i1.Mock implements _i5.HttpApiHelper {
         returnValue: _i4.Future<Iterable<dynamic>>.value(<dynamic>[]),
       ) as _i4.Future<Iterable<dynamic>>);
   @override
-  _i4.Future<Iterable<dynamic>> post(
+  _i4.Future<String> post(
     String? endpoint,
     Map<String, String>? params,
     Map<String, String>? body,
@@ -297,8 +297,8 @@ class MockHttpApiHelper extends _i1.Mock implements _i5.HttpApiHelper {
             body,
           ],
         ),
-        returnValue: _i4.Future<Iterable<dynamic>>.value(<dynamic>[]),
-      ) as _i4.Future<Iterable<dynamic>>);
+        returnValue: _i4.Future<String>.value(''),
+      ) as _i4.Future<String>);
   @override
   _i4.Future<Iterable<dynamic>> put(
     String? endpoint,

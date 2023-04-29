@@ -13,36 +13,62 @@ class ClientsTab extends StatefulWidget {
 }
 
 class _ClientsTabState extends State<ClientsTab> {
-  List<ClientsCard> _buildClientCards(List<Client> clients, Map<String, dynamic> clientStatistics) {
-    List<ClientsCard> clientCards = [];
-    for (Client client in clients) {
-      clientCards.add(ClientsCard(
-        client: client,
-        clientStats: clientStatistics[client.id],
-      ));
-    }
-    return clientCards;
+  List<Client> _clients = [];
+  List<Map<String, dynamic>> _clientStatistics = [];
+  List<ClientsCard> _clientCards = [];
+
+  ClientsCard _buildClientCard(
+      BuildContext context, Client client, Map<String, dynamic> clientStats) {
+    return ClientsCard(
+      client: client,
+      clientStats: clientStats,
+    );
   }
 
-  List<Client> _buildClients() {
-    List<Client> clients = [];
-    widget.clientUtil.getAllClients().then((value) => clients = value);
-    return clients;
+  Future<void> _buildClients() async {
+    return widget.clientUtil.getAllClients().then((value) => setState(() {
+          _clients = value;
+        }));
   }
-  Future<List<Map<String, dynamic>>> _buildClienStatistics(List<Client> clients) {
-    List<Map<String, dynamic>> clientStatistics = [];
-    return Future.forEach(clients, (client) {
-      widget.clientUtil.getClientStatistics(client.id).then((value) => clientStatistics.add(value));
-    }).then((_) => clientStatistics);
+
+  Future<void> _buildClientStatistics() async {
+    return Future.forEach(_clients, (client) {
+      return widget.clientUtil
+          .getClientStatistics(client)
+          .then((value) => setState(() {
+                _clientStatistics.add(value);
+              }));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _buildClients()
+        .then((value) => _buildClientStatistics().then((value) => setState(() {
+              print(_clientStatistics.length);
+              print(_clients.length);
+              for (int i = 0; i < _clients.length; i++) {
+                _clientCards.add(_buildClientCard(
+                    context, _clients[i], _clientStatistics[i]));
+              }
+            })));
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-        children: _buildClientCards(_buildClients(), _buildClienStatistics(_buildClients()) as Map<String, dynamic>),
-      ),
+      child: ListView.builder(
+          itemCount: _clients.length,
+          itemBuilder: (BuildContext context, int index) {
+            try {
+              return _clientCards[index];
+            } catch (e) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 }

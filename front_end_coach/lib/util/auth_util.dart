@@ -1,18 +1,23 @@
+import 'dart:convert';
+
 import 'package:front_end_coach/providers/http_api_helper.dart';
 import 'package:front_end_coach/util/cookie_util.dart';
 import 'package:front_end_coach/assets/constants.dart' as constants;
+import 'package:crypto/crypto.dart';
 
 class AuthUtil {
-  late final HttpApiHelper apiHelper;
+  late final HttpApiHelper habitApiHelper;
 
   // constructor that takes a db string and instantiates a private APIHelper object using the string
-  AuthUtil({required this.apiHelper});
+  AuthUtil({required this.habitApiHelper});
 
   Future<bool> isLoggedIn() async {
     Future<bool> sessionInCookies = AuthUtil.hasSession();
     Future<bool> isValidUser = this.isValidUser();
     Future<bool> loggedIn = Future.wait([sessionInCookies, isValidUser])
-        .then((value) => value[0] && value[1]);
+        .then((value) {
+      return value[0] && value[1];
+    });
     return await loggedIn;
   }
 
@@ -21,25 +26,42 @@ class AuthUtil {
     Map<String, String> params = {"session": token};
     String route = constants.authEndpoint;
 
-    Map<String, dynamic> results = await apiHelper.put(route, params, null) as Map<String, dynamic>;
+    Map<String, dynamic> results =
+        await habitApiHelper.put(route, params, null).then((returnedInfo) {
+          List test = returnedInfo.toList();
+          try {
+            return test[0] as Map<String, dynamic>;
+          } catch (e) {
+            if (test.isEmpty) {
+              // error server side that prevents new users from logging in, this is a workaround
+              return {"admin" :"1"};
+            }
+            return {"error": "Bad request"};
+          }
+        });
     return results.containsKey("admin") && results["admin"] == "1";
   }
 
   Future<String> login(String username, String password) async {
     // validate input, if valid, send to api
     if (AuthUtil.validateUsername(username) == null &&
-        AuthUtil.validatePassword(password)== null) {
-      Map<String, String> params = {"username": username, "password": password};
+        AuthUtil.validatePassword(password) == null) {
+      String encryptedPassword = sha256.convert(utf8.encode(password)).toString();
+      Map<String, String> params = {"username": username, "password": encryptedPassword};
       String route = constants.authEndpoint;
 
-      Map<String, dynamic> result = await apiHelper.get(route, params) as Map<String, dynamic>;
+      Map<String, dynamic> result = await habitApiHelper
+          .get(route, params)
+          .then((value) => value.toList()[0] as Map<String, dynamic>).onError((error, stackTrace) {
+            return { "error" : "Bad request" };
+      });
 
       if (result.containsKey("session")) {
         // save session cookie
-        CookieUtil.saveCookie("session", result["session"]);
+        await CookieUtil.saveCookie("session", result["session"]);
+        await CookieUtil.saveCookie("id", result["id"]); // temp workaround until server's get user info functionality is fixed
         return "Success";
       } else {
-        // load login screen with error message (todo)
         return "Invalid Request";
       }
     } else {
@@ -48,7 +70,8 @@ class AuthUtil {
     }
   }
 
-  Future<dynamic> register(String username, String email, String password) async {
+  Future<String> register(
+      String username, String email, String password) async {
     // validate input, if valid, send to api
     if (AuthUtil.validateUsername(username) == null &&
         AuthUtil.validateEmail(email) == null &&
@@ -61,7 +84,7 @@ class AuthUtil {
       String route = constants.authEndpoint;
 
       try {
-        Future<Iterable<dynamic>> result = apiHelper.post(route, params, null);
+        Future<String> result = habitApiHelper.post(route, params, null);
         return result;
       } catch (e) {
         return Future.value("Issue with your submission: $e");
@@ -74,23 +97,14 @@ class AuthUtil {
 
   static Future<bool> hasSession() async {
     Future<String> token = CookieUtil.getCookie("session");
-    return token.then((value) => value != '');
-  }
-
-  static String? validateName(String? name) {
-    RegExp regExp = RegExp(r'^[a-zA-Z ]+$');
-    bool result = regExp.hasMatch(name??"this is invalid");
-
-    if (!result) {
-      return "Invalid Name";
-    } else {
-      return null;
-    }
+    return token.then((value) {
+      return value != '';
+    });
   }
 
   static String? validatePassword(String? pw) {
     RegExp regExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
-    bool result = regExp.hasMatch(pw??"this is invalid");
+    bool result = regExp.hasMatch(pw ?? "this is invalid");
 
     if (!result) {
       return "Invalid Password";
@@ -101,7 +115,7 @@ class AuthUtil {
 
   static String? validateUsername(String? username) {
     RegExp regExp = RegExp(r'^\w+$');
-    bool result = regExp.hasMatch(username??"this is invalid");
+    bool result = regExp.hasMatch(username ?? "this is invalid");
 
     if (!result) {
       return "Invalid Username";
@@ -113,13 +127,13 @@ class AuthUtil {
   static String? validateEmail(String? email) {
     // Define a regular expression pattern for email validation
     RegExp emailRegExp = RegExp(
-      r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+      r'^[\w-]+@([\w-]+\.)+[\w-]{2,4}$',
       caseSensitive: false,
       multiLine: false,
     );
 
     // Match the email string against the regular expression pattern
-    if (!emailRegExp.hasMatch(email??"nah")) {
+    if (!emailRegExp.hasMatch(email ?? "nah")) {
       // Email is invalid
       return "Please Enter a Valid Email";
     }

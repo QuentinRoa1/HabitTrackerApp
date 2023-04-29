@@ -2,32 +2,29 @@ import 'dart:convert';
 
 class Task {
   String id;
-  String title;
-  String creator;
+  String task;
+  String uid;
   String tag;
-  String startDateTime;
-  String endDateTime;
-  bool isDone;
+  String start;
+  String end;
 
   Task({
     required this.id,
-    required this.title,
-    required this.creator,
+    required this.task,
+    required this.uid,
     required this.tag,
-    required this.startDateTime,
-    required this.endDateTime,
-    required this.isDone,
+    required this.start,
+    required this.end,
   });
 
   factory Task.fromMap(Map<String, dynamic> json) {
     return Task(
       id: json['id'],
-      title: json['title'],
-      creator: json['creator'],
+      uid: json['uid'],
+      task: json['task'],
       tag: json['tag'],
-      startDateTime: json['startDateTime'],
-      endDateTime: json['endDateTime'],
-      isDone: json['isDone'],
+      start: json['start'],
+      end: json['end'],
     );
   }
 
@@ -38,12 +35,33 @@ class Task {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'title': title,
-      'creator': creator,
+      'task': task,
+      'uid': uid,
       'tag': tag,
-      'startDateTime': startDateTime,
-      'endDateTime': endDateTime,
-      'isDone': isDone,
+      'start': start,
+      'end': end,
     };
   }
+
+  // getters
+  String get getId => id;
+
+  String get getTask => task;
+
+  String get getUid => uid;
+
+  String get getTag => tag;
+
+  String get getStart => start;
+
+  String get getEnd => end;
+
+  // setters -- only for the client-side, validation and changing server-side data is handled by HabitAPIHelpers.
+  set setTask(String task) => task = task;
+
+  set setTag(String tag) => tag = tag;
+
+  set setStart(String start) => start = start;
+
+  set setEnd(String end) => end = end;
 }

@@ -11,8 +11,8 @@ import 'dart:async';
 import 'package:front_end_coach/providers/habit_api_helper.dart';
 import 'package:front_end_coach/assets/constants.dart' as constants;
 import 'package:front_end_coach/providers/http_api_helper.dart';
-import 'package:http/http.dart' as http;
 import 'package:front_end_coach/util/cookie_util.dart';
+import 'package:http/http.dart' as http;
 
 // wrapper that provides unimplemented API calls
 class FakeAPI extends HabitApiHelper {
@@ -22,7 +22,8 @@ class FakeAPI extends HabitApiHelper {
   final Map<String, List<String>> coachClientList = {
     "1": ["2", "3", "9"],
     "5": ["6", "7", "8"],
-    "4": ["1", "2", "4", "5", "6", "7", "8", "9"],
+    "4": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "17": ["1","2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18"],
   };
 
   FakeAPI(
@@ -60,8 +61,7 @@ class FakeAPI extends HabitApiHelper {
   @override
   Future<List<String>> getMyClientList() async {
     List<String> keys = clientList.keys.toList();
-    Future<String> cookieValue = CookieUtil.getCookie("session");
-    String session = await cookieValue;
+    String session = constants.adminSessionString;
     if (session == constants.adminSessionString) {
       return Future.value(coachClientList["4"]);
     } else {
@@ -75,7 +75,12 @@ class FakeAPI extends HabitApiHelper {
         if (keys.contains(asList[0]["id"])) {
           return Future.value(coachClientList[asList[0]["id"]]);
         } else {
-          return [];
+          try {
+            // temporary workaround while handling server's get user info endpoint
+            return CookieUtil.getCookie("id").then((value) => [value]);
+          } catch (e) {
+            return [];
+          }
         }
       });
     }
@@ -88,11 +93,11 @@ class FakeAPI extends HabitApiHelper {
   // called for user stats endpoint
   Future<List<dynamic>> getClientStats(String userId) async {
     String endpoint = constants.statisticsAPIEndpoint;
-    String date = DateTime.now().toString().substring(0, 10);
     int length = 7;
+    String startDate = DateTime.now().subtract(Duration(days: length)).toString().substring(0, 10);
     Map<String, String> params = {
       "session": constants.adminSessionString,
-      "date": date,
+      "date": startDate,
       "length": length.toString(),
       "id": userId
     };

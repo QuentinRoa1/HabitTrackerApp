@@ -86,12 +86,12 @@ class HabitApiHelper extends HttpApiHelper {
         "${sevenDaysAgoDateTime.year}-${sevenDaysAgoDateTime.month}-${sevenDaysAgoDateTime.day}";
 
     List<Future<Iterable<dynamic>>> clientDataList =
-        clientIDs.map((e) async => await getClientInfo(sessionString, e, requestDateString, graphLength, route)).toList();
+        clientIDs.map((e) async => await getClientStatistics(sessionString, e, requestDateString, graphLength, route)).toList();
 
     return clientDataList;
   }
 
-  Future<Iterable<dynamic>> getClientInfo(String sessionString, String e, String requestDateString, int graphLength, String route) async {
+  Future<Iterable<dynamic>> getClientStatistics(String sessionString, String e, String requestDateString, int graphLength, String route) async {
     Map<String, String> params = {
       "session": sessionString,
       "client": e,
@@ -116,13 +116,26 @@ class HabitApiHelper extends HttpApiHelper {
     return clientHabitsList;
   }
 
-  Future<Iterable<dynamic>> getClientHabits(String sessionString, String e, String route) async {
+  Future<Iterable<dynamic>> getClientHabits(String sessionString, String client, String route) async {
     Map<String, String> params = {
       "session": sessionString,
-      "client": e,
+      "client": client,
     };
 
     Future<Iterable<dynamic>> clientHabits = super.get(route, params);
     return clientHabits;
+  }
+
+  Future<bool> createClient(String username, String password) async {
+    String route = constants.authEndpoint;
+    Map<String, String> params = {
+      "username": username,
+      "password": password,
+    };
+
+    Future<bool> attemptedCreationFuture = super.post(route, params, null).then((value) {
+      return value == "Created";
+    }).catchError((error) => throw APIError('Error creating client:\n$error'));
+    return attemptedCreationFuture;
   }
 }
