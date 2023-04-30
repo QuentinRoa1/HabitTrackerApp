@@ -13,7 +13,11 @@ class Client {
     required String email,
     required String createdAt,
     required String admin,
-  }) : _createdAt = createdAt, _admin = admin, _email = email, _username = username, _id = id;
+  })  : _createdAt = createdAt,
+        _admin = admin,
+        _email = email,
+        _username = username,
+        _id = id;
 
   factory Client.fromMap(Map<String, dynamic> json) {
     return Client(
@@ -26,12 +30,12 @@ class Client {
   }
 
   Map<String, dynamic> toMap() => {
-    'id': _id,
-    'name': _username,
-    'email': _email,
-    'created_at': _createdAt,
-    'coach_flag': _admin,
-  };
+        'id': _id,
+        'name': _username,
+        'email': _email,
+        'created_at': _createdAt,
+        'coach_flag': _admin,
+      };
 
   // getters
   String get getId => _id;
@@ -48,6 +52,7 @@ class Client {
       throw Exception("Invalid Username");
     }
   }
+
   set setEmail(String email) {
     if (AuthUtil.validateEmail(email) == null) {
       email = email;

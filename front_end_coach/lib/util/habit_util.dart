@@ -10,12 +10,14 @@ class HabitUtil {
     List<String> habitIDs = await habitApiHelper.getMyHabitList();
     List<Task> habitList = [];
     return Future.forEach(habitIDs, (habitID) {
-      habitApiHelper.getHabitDetails(habitID).then(
-          (habitDetails) => habitList.add(Task.fromMap(habitDetails)));
+      habitApiHelper
+          .getHabitDetails(habitID)
+          .then((habitDetails) => habitList.add(Task.fromMap(habitDetails)));
     }).then((_) => habitList);
   }
 
-  Future<List<Map<String, dynamic>>> getHabitStatistics(List<Task> habits) async {
+  Future<List<Map<String, dynamic>>> getHabitStatistics(
+      List<Task> habits) async {
     return [];
   }
   // get individual habit

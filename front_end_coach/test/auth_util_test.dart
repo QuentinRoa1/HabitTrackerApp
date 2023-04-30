@@ -175,17 +175,18 @@ void main() {
         return Future.value(result.toString());
       });
       authUtil = AuthUtil(habitApiHelper: mockApiHelper);
-      String displayedMessage =
-          await authUtil.register(loginData["username"]!, loginData["email"]!, loginData["password"]!);
+      String displayedMessage = await authUtil.register(
+          loginData["username"]!, loginData["email"]!, loginData["password"]!);
       expect(displayedMessage, result.toString());
     });
     test("badRes register test", () async {
       String result = "Issue with your submission: Exception: Bad Sub";
-      when(mockApiHelper.post("auth", any, null)).thenThrow(Exception("Bad Sub"));
+      when(mockApiHelper.post("auth", any, null))
+          .thenThrow(Exception("Bad Sub"));
       authUtil = AuthUtil(habitApiHelper: mockApiHelper);
 
-      String displayedMessage =
-          await authUtil.register(loginData["username"]!, loginData["email"]!, loginData["password"]!);
+      String displayedMessage = await authUtil.register(
+          loginData["username"]!, loginData["email"]!, loginData["password"]!);
       expect(displayedMessage, result.toString());
     });
     test("badInfo register test", () async {

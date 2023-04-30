@@ -1,12 +1,3 @@
-// This contains:
-//  1. data that is not currently in the database schema/not accessible via the api,
-//    but is needed for the app to function.
-//  2. A placeholder for the api calls that cannot be made.
-//    The FakeAPI gets data from the actual api, does the expected server-side processing,
-//    stores some of the information (e.g. tags, habits, etc.) in memory,
-//    and references it when the app needs it, returning results as if it were the api.
-
-// relations between clients and coaches
 import 'dart:async';
 import 'package:front_end_coach/providers/habit_api_helper.dart';
 import 'package:front_end_coach/assets/constants.dart' as constants;
@@ -14,7 +5,14 @@ import 'package:front_end_coach/providers/http_api_helper.dart';
 import 'package:front_end_coach/util/cookie_util.dart';
 import 'package:http/http.dart' as http;
 
-// wrapper that provides unimplemented API calls
+/// This class is workaround for the fact that the api is not yet complete.
+/// This contains:
+///  1. data that is not currently in the database schema/not accessible via the api,
+///    but is needed for the app to function.
+///  2. A placeholder for the api call methods that cannot be made
+///    The FakeAPI gets data from the actual api, does the expected server-side processing,
+///    stores some of the information (e.g. tags, habits, etc.) in memory,
+///    and references it when the app needs it, returning results as if a call were made to the API
 class FakeAPI extends HabitApiHelper {
   final Map<String, dynamic> clientList;
   final Map<String, dynamic> habitList;
@@ -23,25 +21,7 @@ class FakeAPI extends HabitApiHelper {
     "1": ["2", "3", "9"],
     "5": ["6", "7", "8"],
     "4": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-    "17": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "18"
-    ],
+    "17": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","18"],
   };
 
   FakeAPI(
@@ -177,11 +157,31 @@ class FakeAPI extends HabitApiHelper {
 // called for clients endpoint
 }
 
+/// Helper class for FakeAPI
+/// Contains methods for parsing the response from the admin endpoint
+/// and creating the clientList and habitList
+/// Also contains methods for parsing the response from the user stats endpoint
 class _FakeApiSetupHelper {
   HttpApiHelper apiHelper;
 
   _FakeApiSetupHelper({required this.apiHelper});
 
+  /// Calls the admin endpoint, parses the displayed html table data
+  /// and returns a map of client data.
+  /// * The keys are the client IDs, and the values are maps of client data
+  /// * The client data maps have keys "ID", "Username", "Email", "Admin", and "Created"
+  /// * The values for these keys are the corresponding values from the table
+  /// ```
+  /// {
+  ///  "1": {
+  ///    "ID": "1",
+  ///    "Username": "user1",
+  ///    "Email": "user1@fakeapi",
+  ///    "Admin": "0",
+  ///    "Created": "2021-04-01 00:00:00"
+  ///  },
+  /// }
+  /// ```
   Map<String, dynamic> getClientListFromTableData(tableValue) {
     String responseText = tableValue.body;
     String resTable = getTableData(responseText);

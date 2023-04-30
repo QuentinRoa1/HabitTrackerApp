@@ -5,8 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:front_end_coach/util/svg_util.dart';
 
 class LoadingScreen extends StatelessWidget {
-  const LoadingScreen(
-      {super.key});
+  const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

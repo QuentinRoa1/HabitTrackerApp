@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:front_end_coach/router.dart';
 import 'package:front_end_coach/providers/habit_api_helper.dart';
-import 'package:front_end_coach/providers/placeholder_db_data.dart';
+import 'package:front_end_coach/providers/placeholder_db_helper.dart';
 import 'package:front_end_coach/screens/auth/login_screen.dart';
 import 'package:front_end_coach/screens/auth/register_screen.dart';
 import 'package:front_end_coach/screens/loading_screen.dart';
@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
 
     http.Client client = http.Client();
     Future<FakeAPI> apiHelper = HabitApiHelper.create(url, client).then(
-        (habitHelper) =>
-            FakeAPI.createFromHelper(habitHelper).then((wrappedHelper) => wrappedHelper));
+        (habitHelper) => FakeAPI.createFromHelper(habitHelper)
+            .then((wrappedHelper) => wrappedHelper));
 
     // other pages can be automated, these are just here for now
     Map<String, ScreenWidget> routerConfigMap = {
@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
       '/register': RegisterScreen.new,
     };
 
-    Future<HabitRouter> router = apiHelper.then(setUpRouterHandler(routerConfigMap));
+    Future<HabitRouter> router =
+        apiHelper.then(setUpRouterHandler(routerConfigMap));
 
     return FutureBuilder(
         future: router,
@@ -51,7 +52,9 @@ class MyApp extends StatelessWidget {
               routerConfig: habitRouter,
             );
           } else {
-            return const MaterialApp(home: LoadingScreen(),);
+            return const MaterialApp(
+              home: LoadingScreen(),
+            );
           }
         });
   }
@@ -65,7 +68,8 @@ class MyApp extends StatelessWidget {
     }
   }
 
-  FutureOr<HabitRouter> Function(FakeAPI) setUpRouterHandler(Map<String, ScreenWidget> routerConfigMap) {
+  FutureOr<HabitRouter> Function(FakeAPI) setUpRouterHandler(
+      Map<String, ScreenWidget> routerConfigMap) {
     return (apiHelper) {
       AuthUtil auth = AuthUtil(habitApiHelper: apiHelper);
       HabitUtil habitUtil = HabitUtil(habitApiHelper: apiHelper);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end_coach/models/client_model.dart';
 import 'package:front_end_coach/util/client_util.dart';
-import 'package:front_end_coach/widgets/card_widgets/clients_card.dart';
+import 'package:front_end_coach/widgets/cards/clients_card.dart';
 import 'package:front_end_coach/widgets/modal/client_modal.dart';
 
 class ClientsTab extends StatefulWidget {
@@ -20,7 +20,6 @@ class _ClientsTabState extends State<ClientsTab> {
 
   ClientsCard _buildClientCard(
       Client client, Map<String, dynamic> clientStats) {
-
     return ClientsCard(
       client: client,
       clientStats: clientStats,
@@ -34,17 +33,13 @@ class _ClientsTabState extends State<ClientsTab> {
   }
 
   Future<void> _buildClients() async {
-    return widget.clientUtil.getAllClients().then((value) =>
-          _clients = value
-        );
+    return widget.clientUtil.getAllClients().then((value) => _clients = value);
   }
 
   Future<void> _buildClientStatistics() async {
     Future<void> clientStatistics = widget.clientUtil
         .getClientsStatistics(_clients)
-        .then((value) =>
-              _clientStatistics = value
-            );
+        .then((value) => _clientStatistics = value);
     return await clientStatistics;
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end_coach/models/client_model.dart';
 import 'package:front_end_coach/widgets/charts/week_chart.dart';
-import 'package:front_end_coach/widgets/card_widgets/components/info_component.dart';
+import 'package:front_end_coach/widgets/cards/components/info_component.dart';
 
 class ClientsCard extends StatelessWidget {
   final Client client;
@@ -9,7 +9,10 @@ class ClientsCard extends StatelessWidget {
   final Widget Function(BuildContext)? modalBuilder;
 
   const ClientsCard(
-      {super.key, required this.client, required this.clientStats, this.modalBuilder});
+      {super.key,
+      required this.client,
+      required this.clientStats,
+      this.modalBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +20,9 @@ class ClientsCard extends StatelessWidget {
         clientStats["HabitsDays"] as List<Map<String, dynamic>>;
 
     Map<String, String?> statsValues = {
-      "Shortest"  : clientStats["ShortestHabit"],
-      "Highest"   : clientStats["LongestHabit"],
-      "Count"     : clientStats["HabitsCount"].toString()
+      "Shortest": clientStats["ShortestHabit"],
+      "Highest": clientStats["LongestHabit"],
+      "Count": clientStats["HabitsCount"].toString()
     };
 
     return Container(
@@ -28,7 +31,12 @@ class ClientsCard extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         child: InkWell(
           onTap: () {
-            showModalBottomSheet(context: context, builder: modalBuilder ?? (context) { return const Text("N/A"); } );
+            showModalBottomSheet(
+                context: context,
+                builder: modalBuilder ??
+                    (context) {
+                      return const Text("N/A");
+                    });
           },
           child: Row(
             children: [

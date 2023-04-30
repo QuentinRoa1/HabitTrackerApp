@@ -62,16 +62,19 @@ void main() {
       validUrl = 'http://localhost:8080';
       final client = MockClient();
       Map<String, http.Response> urlsToResponses = {
-        '$validUrl/reqWithParams.php?username=test&password=test': http.Response('{"success": true}', 200),
+        '$validUrl/reqWithParams.php?username=test&password=test':
+            http.Response('{"success": true}', 200),
         '$validUrl/reqNoParams.php': http.Response('{"success": true}', 200),
         '$validUrl/badResponse.php': http.Response('', 400)
       };
 
       for (String url in urlsToResponses.keys) {
-        when(client.get(Uri.parse(url))).thenAnswer((_) async => urlsToResponses[url]!);
+        when(client.get(Uri.parse(url)))
+            .thenAnswer((_) async => urlsToResponses[url]!);
       }
 
-      when(client.get(Uri.parse('http://localhost:8080/badRequest.php'))).thenThrow(Exception('Failed Connection Test'));
+      when(client.get(Uri.parse('http://localhost:8080/badRequest.php')))
+          .thenThrow(Exception('Failed Connection Test'));
 
       sut = HttpApiHelper(url: validUrl, client: client);
     });
@@ -79,18 +82,17 @@ void main() {
     test('Valid url, route', () async {
       String route = 'reqNoParams';
       Map<String, String>? params;
-      Map<String, dynamic> response = (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
+      Map<String, dynamic> response =
+          (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
 
       expect(response['success'], true);
     });
 
     test('Valid url, route and params', () async {
       String route = 'reqWithParams';
-      Map<String, String>? params = {
-        "username": "test",
-        "password": "test"
-      };
-      Map<String, dynamic> response = (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
+      Map<String, String>? params = {"username": "test", "password": "test"};
+      Map<String, dynamic> response =
+          (await sut.get(route, params)).toList()[0] as Map<String, dynamic>;
 
       expect(response['success'], true);
     });
@@ -99,23 +101,22 @@ void main() {
       String route = 'badResponse';
       Map<String, String>? params;
 
-      expect(() async => await sut.get(route, params), throwsA(isA<APIError>()));
+      expect(
+          () async => await sut.get(route, params), throwsA(isA<APIError>()));
     });
 
     test('Bad request', () async {
       String route = 'badRequest';
       Map<String, String>? params;
 
-      expect(() async => await sut.get(route, params), throwsA(isA<APIError>()));
+      expect(
+          () async => await sut.get(route, params), throwsA(isA<APIError>()));
     });
   });
 
   group("generateUrlParamString test", () {
     test("valid params", () {
-      Map<String, String> params = {
-        "username": "test",
-        "password": "test"
-      };
+      Map<String, String> params = {"username": "test", "password": "test"};
 
       String expected = "username=test&password=test";
       String actual = HttpApiHelper.generateUrlParamString(params);
@@ -136,7 +137,8 @@ void main() {
         "password": "test"
       };
 
-      expect(() => HttpApiHelper.generateUrlParamString(params), throwsA(isA<APIError>()));
+      expect(() => HttpApiHelper.generateUrlParamString(params),
+          throwsA(isA<APIError>()));
     });
   });
 }

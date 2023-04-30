@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_end_coach/widgets/card_widgets/components/statistics_widget_group.dart';
+import 'package:front_end_coach/widgets/cards/components/statistics_widget_group.dart';
 
 class InfoComponent extends StatelessWidget {
   final String title;

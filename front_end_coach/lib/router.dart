@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_end_coach/providers/placeholder_db_data.dart';
+import 'package:front_end_coach/providers/placeholder_db_helper.dart';
 import 'package:front_end_coach/screens/dashboard_screen.dart';
 import 'package:front_end_coach/util/client_util.dart';
 import 'package:front_end_coach/util/goal_util.dart';

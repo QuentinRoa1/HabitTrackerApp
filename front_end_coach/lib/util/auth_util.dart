@@ -14,8 +14,8 @@ class AuthUtil {
   Future<bool> isLoggedIn() async {
     Future<bool> sessionInCookies = AuthUtil.hasSession();
     Future<bool> isValidUser = this.isValidUser();
-    Future<bool> loggedIn = Future.wait([sessionInCookies, isValidUser])
-        .then((value) {
+    Future<bool> loggedIn =
+        Future.wait([sessionInCookies, isValidUser]).then((value) {
       return value[0] && value[1];
     });
     return await loggedIn;
@@ -28,17 +28,17 @@ class AuthUtil {
 
     Map<String, dynamic> results =
         await habitApiHelper.put(route, params, null).then((returnedInfo) {
-          List test = returnedInfo.toList();
-          try {
-            return test[0] as Map<String, dynamic>;
-          } catch (e) {
-            if (test.isEmpty) {
-              // error server side that prevents new users from logging in, this is a workaround
-              return {"admin" :"1"};
-            }
-            return {"error": "Bad request"};
-          }
-        });
+      List test = returnedInfo.toList();
+      try {
+        return test[0] as Map<String, dynamic>;
+      } catch (e) {
+        if (test.isEmpty) {
+          // error server side that prevents new users from logging in, this is a workaround
+          return {"admin": "1"};
+        }
+        return {"error": "Bad request"};
+      }
+    });
     return results.containsKey("admin") && results["admin"] == "1";
   }
 
@@ -46,20 +46,28 @@ class AuthUtil {
     // validate input, if valid, send to api
     if (AuthUtil.validateUsername(username) == null &&
         AuthUtil.validatePassword(password) == null) {
-      String encryptedPassword = sha256.convert(utf8.encode(password)).toString();
-      Map<String, String> params = {"username": username, "password": encryptedPassword};
+      String encryptedPassword =
+          sha256.convert(utf8.encode(password)).toString();
+      Map<String, String> params = {
+        "username": username,
+        "password": encryptedPassword
+      };
       String route = constants.authEndpoint;
 
       Map<String, dynamic> result = await habitApiHelper
           .get(route, params)
-          .then((value) => value.toList()[0] as Map<String, dynamic>).onError((error, stackTrace) {
-            return { "error" : "Bad request" };
+          .then((value) => value.toList()[0] as Map<String, dynamic>)
+          .onError((error, stackTrace) {
+        return {"error": "Bad request"};
       });
 
       if (result.containsKey("session")) {
         // save session cookie
         await CookieUtil.saveCookie("session", result["session"]);
-        await CookieUtil.saveCookie("id", result["id"]); // temp workaround until server's get user info functionality is fixed
+        await CookieUtil.saveCookie(
+            "id",
+            result[
+                "id"]); // temp workaround until server's get user info functionality is fixed
         return "Success";
       } else {
         return "Invalid Request";

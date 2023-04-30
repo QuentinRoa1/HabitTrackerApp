@@ -12,4 +12,5 @@ const String tagEndpoint = "tags";
 const String clientEndpoint = "clients";
 
 // admin string
-const String adminSessionString = "r7VNNrUrsiHhEMsNa8OVqHB77uFKAHq8AnAhxXO55qDwW0JquvuL7BSwciiJQ48p";
+const String adminSessionString =
+    "r7VNNrUrsiHhEMsNa8OVqHB77uFKAHq8AnAhxXO55qDwW0JquvuL7BSwciiJQ48p";

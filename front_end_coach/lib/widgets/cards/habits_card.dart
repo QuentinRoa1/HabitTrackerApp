@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_end_coach/widgets/card_widgets/components/info_component.dart';
+import 'package:front_end_coach/widgets/cards/components/info_component.dart';
 import 'package:front_end_coach/widgets/charts/week_chart.dart';
 
 import 'package:front_end_coach/models/task_model.dart';

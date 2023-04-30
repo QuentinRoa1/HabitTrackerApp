@@ -6,5 +6,6 @@ abstract class AbstractScreenWidget extends StatefulWidget {
   final HabitUtil habitUtil;
   final AuthUtil auth;
 
-  const AbstractScreenWidget({super.key, required this.habitUtil, required this.auth});
+  const AbstractScreenWidget(
+      {super.key, required this.habitUtil, required this.auth});
 }

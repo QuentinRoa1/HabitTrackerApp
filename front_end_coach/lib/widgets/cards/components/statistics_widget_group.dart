@@ -28,8 +28,8 @@ class StatisticsWidgetGroup extends StatelessWidget {
     // print(statsValues);
 
     statsValues.forEach((key, value) {
-      widgets
-          .add(_StatisticsWidget(caption: key, statisticString: value ?? "N/A"));
+      widgets.add(
+          _StatisticsWidget(caption: key, statisticString: value ?? "N/A"));
     });
 
     return widgets;

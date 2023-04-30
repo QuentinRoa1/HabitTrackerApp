@@ -1,4 +1,4 @@
-import 'package:front_end_coach/providers/placeholder_db_data.dart';
+import 'package:front_end_coach/providers/placeholder_db_helper.dart';
 import 'package:front_end_coach/models/client_model.dart';
 
 import 'package:front_end_coach/models/task_model.dart';
@@ -82,11 +82,10 @@ class ClientUtil {
     List<String> taskIDs = await habitApiHelper.getClientTasks(clientID);
     List<Task> taskList = [];
     return Future.forEach(taskIDs, (taskID) {
-      return habitApiHelper.getHabitDetails(taskID).then(
-          (taskDetails) {
-            print(taskDetails);
-            return taskList.add(Task.fromMap(taskDetails));
-          });
+      return habitApiHelper.getHabitDetails(taskID).then((taskDetails) {
+        print(taskDetails);
+        return taskList.add(Task.fromMap(taskDetails));
+      });
     }).then((_) => taskList);
   }
 

@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:front_end_coach/errors/api_error.dart';
-import 'package:front_end_coach/providers/abstract_http_api_provider.dart';
+import 'package:front_end_coach/providers/abstract_http_api_helper.dart';
 
 class HttpApiHelper extends AbstractHttpApiHelper {
   late final String url;
@@ -27,7 +27,8 @@ class HttpApiHelper extends AbstractHttpApiHelper {
   }
 
   @override
-  Future<Iterable<dynamic>> get(String endpoint, Map<String, String>? params) async {
+  Future<Iterable<dynamic>> get(
+      String endpoint, Map<String, String>? params) async {
     Uri destUri = generateURI(endpoint, params);
 
     try {
@@ -51,7 +52,8 @@ class HttpApiHelper extends AbstractHttpApiHelper {
       }
     } catch (e) {
       // API connection failed
-      throw APIError('API req to $endpoint failed with params ${params.toString()} -- ${e.toString()}');
+      throw APIError(
+          'API req to $endpoint failed with params ${params.toString()} -- ${e.toString()}');
     }
   }
 

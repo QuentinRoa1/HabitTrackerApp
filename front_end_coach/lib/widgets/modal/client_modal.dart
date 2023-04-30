@@ -7,7 +7,9 @@ import 'package:front_end_coach/models/task_model.dart';
 class CalendarModal extends StatefulWidget {
   final ClientUtil clientUtil;
   final String clientId;
-  const CalendarModal({Key? key, required this.clientUtil, required this.clientId}) : super(key: key);
+  const CalendarModal(
+      {Key? key, required this.clientUtil, required this.clientId})
+      : super(key: key);
 
   @override
   _CalendarModalState createState() => _CalendarModalState();
@@ -19,9 +21,7 @@ class _CalendarModalState extends State<CalendarModal> {
   @override
   void initState() {
     widget.clientUtil.getClientTasks(widget.clientId).then((value) {
-      setState( () =>
-          _taskData = value
-      );
+      setState(() => _taskData = value);
     });
     // _pieData = _getPieData(_taskData);
     super.initState();
@@ -49,7 +49,6 @@ class _CalendarModalState extends State<CalendarModal> {
             selectionDecoration: BoxDecoration(
               border: Border.all(color: Colors.transparent, width: 0),
             ),
-
           ),
         ],
       ),

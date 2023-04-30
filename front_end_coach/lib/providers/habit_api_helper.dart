@@ -122,15 +122,18 @@ class HabitApiHelper extends HttpApiHelper {
     });
   }
 
-  Future<List<dynamic>> getClientStats(
-      String userID) async {
+  Future<List<dynamic>> getClientStats(String userID) async {
     String route = constants.statisticsAPIEndpoint;
     String cookieString = "session";
     String sessionString = await CookieUtil.getCookie(cookieString);
     int length = 7;
-    String startDate = DateTime.now().subtract(Duration(days: length)).toString().substring(0, 10);
+    String startDate = DateTime.now()
+        .subtract(Duration(days: length))
+        .toString()
+        .substring(0, 10);
 
-    Future<List<dynamic>> clientInfo = getClientStatistics(sessionString, userID, startDate, length, route);
+    Future<List<dynamic>> clientInfo =
+        getClientStatistics(sessionString, userID, startDate, length, route);
     return clientInfo;
   }
 
@@ -174,7 +177,8 @@ class HabitApiHelper extends HttpApiHelper {
       "client": client,
     };
 
-    Future<Iterable<dynamic>> clientHabits = super.get(route, params).then((value) {
+    Future<Iterable<dynamic>> clientHabits =
+        super.get(route, params).then((value) {
       return value;
     });
     return clientHabits;

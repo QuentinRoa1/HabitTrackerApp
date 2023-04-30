@@ -44,8 +44,7 @@ class _GraphSettings {
     }
 
     double interval = (yMax / 2).round().toDouble();
-    y = NumericAxis(
-        maximum: yMax as double, interval: interval);
+    y = NumericAxis(maximum: yMax as double, interval: interval);
     x = NumericAxis(
         maximum: (values.length - 1) as double, interval: 1, isVisible: false);
 

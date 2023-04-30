@@ -20,7 +20,7 @@ void main() {
       client = MockClient();
       String route = 'auth';
       Map<String, String> params = {
-        "username":  "testing",
+        "username": "testing",
         "password": "testing"
       };
 
@@ -50,11 +50,13 @@ void main() {
 
     test('Invalid url', () async {
       // initially yields a HabitApiHelper object, but eventually emits an ApiError
-      expect(() => HabitApiHelper.create(badUrl, client), throwsA(isA<APIError>()));
+      expect(() => HabitApiHelper.create(badUrl, client),
+          throwsA(isA<APIError>()));
     });
 
     test('No connection', () async {
-      expect(() => HabitApiHelper.create(noConnectUrl, client), throwsA(isA<APIError>()));
+      expect(() => HabitApiHelper.create(noConnectUrl, client),
+          throwsA(isA<APIError>()));
     });
 
     tearDownAll(() {
