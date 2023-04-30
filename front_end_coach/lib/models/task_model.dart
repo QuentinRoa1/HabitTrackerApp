@@ -1,12 +1,7 @@
 import 'dart:convert';
 
 class Task {
-  String id;
-  String task;
-  String uid;
-  String tag;
-  String start;
-  String end;
+  String id, task, uid, tag, start, end;
 
   Task({
     required this.id,

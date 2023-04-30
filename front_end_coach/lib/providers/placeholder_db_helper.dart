@@ -130,7 +130,6 @@ class FakeAPI extends HabitApiHelper {
 
   @override
   Future<Map<String, dynamic>> getHabitDetails(String habitID) async {
-    print(habitList[habitID]);
     return Future.value(habitList[habitID]);
   }
 

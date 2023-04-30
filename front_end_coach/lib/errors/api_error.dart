@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class APIError implements Exception {
   final String message;
 
