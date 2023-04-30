@@ -51,7 +51,7 @@ class HttpApiHelper extends AbstractHttpApiHelper {
       }
     } catch (e) {
       // API connection failed
-      throw APIError('API req failed with params ${params.toString()} -- ${e.toString()}');
+      throw APIError('API req to $endpoint failed with params ${params.toString()} -- ${e.toString()}');
     }
   }
 

@@ -23,7 +23,25 @@ class FakeAPI extends HabitApiHelper {
     "1": ["2", "3", "9"],
     "5": ["6", "7", "8"],
     "4": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-    "17": ["1","2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18"],
+    "17": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "18"
+    ],
   };
 
   FakeAPI(
@@ -34,27 +52,31 @@ class FakeAPI extends HabitApiHelper {
     tagList = Set<String>.from(habitList.values.map((e) => e["tag"] ?? ""));
   }
 
+  static Future<FakeAPI> create(String url, http.Client client) async {
+    HttpApiHelper apiHelper = HttpApiHelper(url: url, client: client);
+    return await createFromHelper(apiHelper);
+  }
+
   // factory method
-  static Future<FakeAPI> create(HttpApiHelper apiHelper) async {
+  static Future<FakeAPI> createFromHelper(HttpApiHelper apiHelper) async {
     _FakeApiSetupHelper setupHelper = _FakeApiSetupHelper(apiHelper: apiHelper);
     String adminEndpoint = constants.adminEndpoint;
     String url =
         "${apiHelper.url}/$adminEndpoint.php?session=${constants.adminSessionString}";
     Uri uri = Uri.parse(url);
 
-    return await apiHelper.client.get(uri)
-    .then((response) async {
-      Map<String, dynamic> clientList = setupHelper.getClientListFromTableData(response);
-      return setupHelper.getHabitDataFromClientList(clientList).then(
-        (habitList) {
-          return FakeAPI(
+    return await apiHelper.client.get(uri).then((response) async {
+      Map<String, dynamic> clientList =
+          setupHelper.getClientListFromTableData(response);
+      return setupHelper
+          .getHabitDataFromClientList(clientList)
+          .then((habitList) {
+        return FakeAPI(
             url: apiHelper.url,
             client: apiHelper.client,
             clientList: clientList,
-            habitList: habitList
-          );
-        }
-      );
+            habitList: habitList);
+      });
     });
   }
 
@@ -70,7 +92,8 @@ class FakeAPI extends HabitApiHelper {
         "session": session,
       };
       return super.put(endpoint, params, null).then((value) {
-        List<Map<String, dynamic>> asList = value.toList() as List<Map<String, dynamic>>;
+        List<Map<String, dynamic>> asList =
+            value.toList() as List<Map<String, dynamic>>;
 
         if (keys.contains(asList[0]["id"])) {
           return Future.value(coachClientList[asList[0]["id"]]);
@@ -86,26 +109,30 @@ class FakeAPI extends HabitApiHelper {
     }
   }
 
+  @override
   Future<Map<String, dynamic>> getClientDetails(String clientID) async {
     return Future.value(clientList[clientID]);
   }
 
   // called for user stats endpoint
-  Future<List<dynamic>> getClientStats(String userId) async {
+  @override
+  Future<List<dynamic>> getClientStats(String userID) async {
     String endpoint = constants.statisticsAPIEndpoint;
     int length = 7;
-    String startDate = DateTime.now().subtract(Duration(days: length)).toString().substring(0, 10);
-    Map<String, String> params = {
-      "session": constants.adminSessionString,
-      "date": startDate,
-      "length": length.toString(),
-      "id": userId
-    };
+    String startDate = DateTime.now()
+        .subtract(Duration(days: length))
+        .toString()
+        .substring(0, 10);
+    List<dynamic> clientInfo = await super
+        .getClientStatistics(
+            constants.adminSessionString, userID, startDate, length, endpoint)
+        .then((value) => Future.value(value));
+    return clientInfo;
+  }
 
-    return super.get(endpoint, params).then((value) {
-      List results = value.toList();
-      return Future.value(results);
-    });
+  @override
+  Future<String> getHabitName(String habitId) async {
+    return Future.value(habitList[habitId]["name"]);
   }
 
   Future<http.Response> getHabitStats(Map<String, dynamic> apiHabitList) async {
@@ -113,11 +140,30 @@ class FakeAPI extends HabitApiHelper {
     // determine the habit stats
     // return them in a format like the userStats, but grouped by user as opposed to habit
 
-
     throw UnimplementedError();
   }
 
-  // todo goal stats
+  @override
+  Future<List<String>> getMyHabitList() async {
+    return Future.value(habitList.keys.toList());
+  }
+
+  @override
+  Future<Map<String, dynamic>> getHabitDetails(String habitID) async {
+    print(habitList[habitID]);
+    return Future.value(habitList[habitID]);
+  }
+
+  @override
+  Future<List<String>> getClientTasks(String clientId) {
+    List<String> taskList = [];
+    for (var habit in habitList.values) {
+      if (habit["uid"] == clientId) {
+        taskList.add(habit["id"]);
+      }
+    }
+    return Future.value(taskList);
+  }
 
   // called for tags endpoint
   Future<http.Response> getTags(bool Function(String)? clause) async {
@@ -152,29 +198,31 @@ class _FakeApiSetupHelper {
       }
     }
     return clientList;
-    }
+  }
 
   Future<Map<String, dynamic>> getHabitDataFromClientList(
       Map<String, dynamic> clientList) {
     List<String> clients = clientList.keys.toList();
     Map<String, String> params = {"session": constants.adminSessionString};
 
-    return getHabitData(clients, params) ;
+    return getHabitData(clients, params);
   }
 
   Future<Map<String, dynamic>> getHabitData(
       List<String> clients, Map<String, String> params) async {
     Map<String, dynamic> habitList = {};
 
-    return Future.forEach(clients, (thisClient) {
+    await Future.forEach(clients, (thisClient) {
       params["id"] = thisClient;
-      apiHelper.get(constants.habitEndpoint, params).then((value) {
-        for (var val in value) {
+      return apiHelper.get(constants.habitEndpoint, params).then((value) {
+        List<dynamic> valueList = value.toList();
+        for (var val in valueList) {
           // this is the habit id, not the param id referenced above
-          habitList[val["id"]] = val;
+          habitList.addAll({val["id"]: val});
         }
       });
-    }).then((value) => habitList);
+    });
+    return habitList;
   }
 
   String getTableData(String table) {

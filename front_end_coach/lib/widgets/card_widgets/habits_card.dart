@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:front_end_coach/widgets/card_widgets/components/info_component.dart';
+import 'package:front_end_coach/widgets/charts/week_chart.dart';
 
 import 'package:front_end_coach/models/task_model.dart';
 
-class HabitsCard extends StatefulWidget {
-  Task task;
-  Map<String, dynamic> taskStats;
+class HabitsCard extends StatelessWidget {
+  final Task task;
+  final Map<String, dynamic> taskStats;
 
-  HabitsCard(
-      {required this.task, required this.taskStats});
+  const HabitsCard({super.key, required this.task, required this.taskStats});
 
-  @override
-  _HabitsCardState createState() => _HabitsCardState();
-}
-
-class _HabitsCardState extends State<HabitsCard> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    List<Map<String, dynamic>> habits =
+        taskStats["HabitsDays"] as List<Map<String, dynamic>>;
 
-      },
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(widget.task.getTask),
-            subtitle: Text(widget.task.getTag),
+    Map<String, String?> statsValues = {
+      "Average": taskStats["AverageHabit"],
+    };
+
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 150, maxWidth: 500),
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: () {},
+          child: Row(
+            children: [
+              InfoComponent(
+                title: task.getTask,
+                subtitle: task.getUid,
+                statsValues: statsValues,
+              ),
+              WeekChart(values: habits),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

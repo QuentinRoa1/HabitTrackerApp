@@ -1,6 +1,8 @@
 import 'package:front_end_coach/providers/placeholder_db_data.dart';
 import 'package:front_end_coach/models/client_model.dart';
 
+import 'package:front_end_coach/models/task_model.dart';
+
 class ClientUtil {
   late final FakeAPI habitApiHelper;
 
@@ -21,21 +23,32 @@ class ClientUtil {
     return Client.fromMap(clientDetails);
   }
 
+  Future<List<Map<String, dynamic>>> getClientsStatistics(
+      List<Client> clients) async {
+    /// For each client, it adds an entry to the map, then returns the map when done
+    List<Map<String, dynamic>> clientsStatistics = [];
+    return Future.forEach(clients, (client) async {
+      return await getClientStatistics(client)
+          .then((clientStats) => clientsStatistics.add(clientStats));
+    }).then((_) => clientsStatistics);
+  }
+
   Future<Map<String, dynamic>> getClientStatistics(Client client) async {
     Future<Map<String, dynamic>> statistics =
-        habitApiHelper.getClientStats(client.getId).then((value) {
-          try {
-            Map<String, dynamic> clientStats = value[0];
-            clientStats["HabitsDays"] = fillHabitsDaysList(clientStats);
-            return clientStats;
-          } catch (e) {
-            return {};
-          }
-        });
+        habitApiHelper.getClientStats(client.getId).then((value) async {
+      try {
+        Map<String, dynamic> clientStats = value[0] as Map<String, dynamic>;
+        clientStats["HabitsDays"] = fillHabitsDaysList(clientStats);
+        return clientStats;
+      } catch (e) {
+        return {};
+      }
+    });
     return statistics;
   }
 
-  List<Map<String, dynamic>> fillHabitsDaysList(Map<String, dynamic> clientStats) {
+  List<Map<String, dynamic>> fillHabitsDaysList(
+      Map<String, dynamic> clientStats) {
     List<Map<String, dynamic>> habitsDaysList = [];
     int length = 7;
     DateTime startDate = DateTime.now().subtract(Duration(days: length));
@@ -59,10 +72,22 @@ class ClientUtil {
   }
 
 // create client
-  Future<bool> createClient(String username, String email, String password) async {
-    bool clientCreated =
-        await habitApiHelper.createClient(username, email);
+  Future<bool> createClient(
+      String username, String email, String password) async {
+    bool clientCreated = await habitApiHelper.createClient(username, email);
     return clientCreated;
+  }
+
+  Future<List<Task>> getClientTasks(String clientID) async {
+    List<String> taskIDs = await habitApiHelper.getClientTasks(clientID);
+    List<Task> taskList = [];
+    return Future.forEach(taskIDs, (taskID) {
+      return habitApiHelper.getHabitDetails(taskID).then(
+          (taskDetails) {
+            print(taskDetails);
+            return taskList.add(Task.fromMap(taskDetails));
+          });
+    }).then((_) => taskList);
   }
 
 // update client

@@ -1,49 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 import 'package:front_end_coach/models/client_model.dart';
+import 'package:front_end_coach/widgets/charts/week_chart.dart';
+import 'package:front_end_coach/widgets/card_widgets/components/info_component.dart';
 
-class ClientsCard extends StatefulWidget {
-  Client client;
-  Map<String, dynamic> clientStats;
+class ClientsCard extends StatelessWidget {
+  final Client client;
+  final Map<String, dynamic> clientStats;
+  final Widget Function(BuildContext)? modalBuilder;
 
-  ClientsCard({required this.client, required this.clientStats});
+  const ClientsCard(
+      {super.key, required this.client, required this.clientStats, this.modalBuilder});
 
-  @override
-  _ClientsCardState createState() => _ClientsCardState();
-}
-
-class _ClientsCardState extends State<ClientsCard> {
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> habits = widget.clientStats["HabitsDays"] as List<Map<String, dynamic>>;
-    List<int> counts = [];
-    for (Map<String, dynamic> habit in habits) {
-      counts.add(habit["count"]);
-    }
-    print(counts.toString());
+    List<Map<String, dynamic>> habits =
+        clientStats["HabitsDays"] as List<Map<String, dynamic>>;
 
-    return InkWell(
-      onTap: () {},
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    Map<String, String?> statsValues = {
+      "Shortest"  : clientStats["ShortestHabit"],
+      "Highest"   : clientStats["LongestHabit"],
+      "Count"     : clientStats["HabitsCount"].toString()
+    };
+
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 150, maxWidth: 500),
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: () {
+            showModalBottomSheet(context: context, builder: modalBuilder ?? (context) { return const Text("N/A"); } );
+          },
+          child: Row(
             children: [
-              ListTile(
+              InfoComponent(
+                title: client.getUsername,
+                subtitle: client.getEmail,
                 leading: const Icon(Icons.person),
-                title: Text(widget.client.getUsername),
-                subtitle: Text(widget.client.getEmail),
+                statsValues: statsValues,
               ),
-              Container(
-                height: 50,
-                width: 100,
-                child: SfSparkLineChart(
-                  data: counts,
-                ),
-              )
+              WeekChart(values: habits),
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

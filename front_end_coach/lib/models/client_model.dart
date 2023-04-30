@@ -66,4 +66,9 @@ class Client {
       throw Exception("Invalid Date");
     }
   }
+
+  @override
+  String toString() {
+    return 'Client: {\n\tid: $_id, \n\tusername: $_username, \n\temail: $_email, \n\tcreated_at: $_createdAt, \n\tcoach_flag: $_admin\n}';
+  }
 }

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:front_end_coach/providers/habit_api_helper.dart';
 import 'package:http/http.dart' as http;
-import 'package:front_end_coach/providers/placeholder_db_data.dart';
 import 'package:front_end_coach/router.dart';
+import 'package:front_end_coach/providers/habit_api_helper.dart';
+import 'package:front_end_coach/providers/placeholder_db_data.dart';
 import 'package:front_end_coach/screens/auth/login_screen.dart';
 import 'package:front_end_coach/screens/auth/register_screen.dart';
 import 'package:front_end_coach/screens/loading_screen.dart';
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     http.Client client = http.Client();
     Future<FakeAPI> apiHelper = HabitApiHelper.create(url, client).then(
         (habitHelper) =>
-            FakeAPI.create(habitHelper).then((wrappedHelper) => wrappedHelper));
+            FakeAPI.createFromHelper(habitHelper).then((wrappedHelper) => wrappedHelper));
 
     // other pages can be automated, these are just here for now
     Map<String, ScreenWidget> routerConfigMap = {
